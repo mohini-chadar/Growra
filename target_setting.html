@@ -1,0 +1,1085 @@
+<!-- ----------------------------------- PROMPT 1 --------------------------------------- -->
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Target Setter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .target {
+      background: white;
+      padding: 10px;
+      margin-top: 10px;
+      border-left: 5px solid #28a745;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎯 Set Your Targets</h1>
+
+  <input type="text" id="targetTitle" placeholder="Target Title" />
+  <textarea id="targetDescription" placeholder="Target Description"></textarea>
+  <button onclick="addTarget()">Add Target</button>
+
+  <div id="targetList"></div>
+
+  <script>
+    function addTarget() {
+      const title = document.getElementById("targetTitle").value.trim();
+      const desc = document.getElementById("targetDescription").value.trim();
+
+      if (title === "" || desc === "") {
+        alert("Please fill in both fields!");
+        return;
+      }
+
+      const targetList = document.getElementById("targetList");
+
+      const targetDiv = document.createElement("div");
+      targetDiv.className = "target";
+      targetDiv.innerHTML = `<strong>${title}</strong><p>${desc}</p>`;
+
+      targetList.appendChild(targetDiv);
+
+      // Clear input fields
+      document.getElementById("targetTitle").value = "";
+      document.getElementById("targetDescription").value = "";
+    }
+  </script>
+</body>
+</html> -->
+
+<!-- ------------------------- PROMPT 2 --------------------------------------------------- -->
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Target Setter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px 30px;
+      border: 2px solid #28a745;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .target {
+      background: #f9f9f9;
+      padding: 10px;
+      margin-top: 10px;
+      border-left: 5px solid #28a745;
+      position: relative;
+    }
+    .timestamp, .deadline {
+      font-size: 0.85em;
+      color: #555;
+    }
+    .actions {
+      margin-top: 5px;
+    }
+    .actions button {
+      width: auto;
+      margin-right: 5px;
+      background-color: #007bff;
+    }
+    .actions button:hover {
+      background-color: #0069d9;
+    }
+    .actions .delete {
+      background-color: #dc3545;
+    }
+    .actions .delete:hover {
+      background-color: #c82333;
+    }
+    .edit-input {
+      width: 100%;
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 Set Your Targets</h1>
+
+    <input type="text" id="targetTitle" placeholder="Target Title" />
+    <textarea id="targetDescription" placeholder="Target Description"></textarea>
+    <input type="date" id="targetDeadline" />
+    <button onclick="addTarget()">Add Target</button>
+
+    <div id="targetList"></div>
+  </div>
+
+  <script>
+    window.onload = function () {
+      const stored = localStorage.getItem("targets");
+      if (stored) {
+        const targets = JSON.parse(stored);
+        targets.forEach(t => renderTarget(t));
+      }
+    };
+
+    function saveToStorage(targets) {
+      localStorage.setItem("targets", JSON.stringify(targets));
+    }
+
+    function getTargets() {
+      const stored = localStorage.getItem("targets");
+      return stored ? JSON.parse(stored) : [];
+    }
+
+    function addTarget() {
+      const title = document.getElementById("targetTitle").value.trim();
+      const desc = document.getElementById("targetDescription").value.trim();
+      const deadline = document.getElementById("targetDeadline").value;
+
+      if (title === "" || desc === "") {
+        alert("Please fill in the title and description!");
+        return;
+      }
+
+      const now = new Date().toLocaleString();
+      const target = {
+        id: Date.now(),
+        title,
+        desc,
+        deadline,
+        timestamp: now
+      };
+
+      const targets = getTargets();
+      targets.push(target);
+      saveToStorage(targets);
+      renderTarget(target);
+
+      document.getElementById("targetTitle").value = "";
+      document.getElementById("targetDescription").value = "";
+      document.getElementById("targetDeadline").value = "";
+    }
+
+    function renderTarget(target) {
+      const targetList = document.getElementById("targetList");
+
+      const targetDiv = document.createElement("div");
+      targetDiv.className = "target";
+      targetDiv.setAttribute("data-id", target.id);
+
+      targetDiv.innerHTML = `
+        <div class="display-mode">
+          <strong class="title">${target.title}</strong>
+          <p class="desc">${target.desc}</p>
+          <div class="timestamp">Added on: ${target.timestamp}</div>
+          ${target.deadline ? `<div class="deadline">Deadline: <span class="deadline-text">${target.deadline}</span></div>` : ""}
+          <div class="actions">
+            <button onclick="enterEditMode(${target.id})">Edit</button>
+            <button class="delete" onclick="deleteTarget(${target.id})">Delete</button>
+          </div>
+        </div>
+      `;
+
+      targetList.appendChild(targetDiv);
+    }
+
+    function deleteTarget(id) {
+      const targets = getTargets().filter(t => t.id !== id);
+      saveToStorage(targets);
+      document.querySelector(`.target[data-id='${id}']`).remove();
+    }
+
+    function enterEditMode(id) {
+      const targetDiv = document.querySelector(`.target[data-id='${id}']`);
+      const target = getTargets().find(t => t.id === id);
+
+      targetDiv.innerHTML = `
+        <input class="edit-input" type="text" id="editTitle-${id}" value="${target.title}" />
+        <textarea class="edit-input" id="editDesc-${id}">${target.desc}</textarea>
+        <input class="edit-input" type="date" id="editDeadline-${id}" value="${target.deadline || ''}" />
+        <div class="actions">
+          <button onclick="saveEdit(${id})">Save</button>
+          <button class="delete" onclick="cancelEdit(${id})">Cancel</button>
+        </div>
+      `;
+    }
+
+    function saveEdit(id) {
+      const title = document.getElementById(`editTitle-${id}`).value.trim();
+      const desc = document.getElementById(`editDesc-${id}`).value.trim();
+      const deadline = document.getElementById(`editDeadline-${id}`).value;
+
+      if (title === "" || desc === "") {
+        alert("Title and description cannot be empty!");
+        return;
+      }
+
+      const targets = getTargets().map(t => {
+        if (t.id === id) {
+          return { ...t, title, desc, deadline };
+        }
+        return t;
+      });
+
+      saveToStorage(targets);
+      document.getElementById("targetList").innerHTML = "";
+      targets.forEach(t => renderTarget(t));
+    }
+
+    function cancelEdit(id) {
+      const target = getTargets().find(t => t.id === id);
+      const targetDiv = document.querySelector(`.target[data-id='${id}']`);
+      targetDiv.innerHTML = `
+        <div class="display-mode">
+          <strong class="title">${target.title}</strong>
+          <p class="desc">${target.desc}</p>
+          <div class="timestamp">Added on: ${target.timestamp}</div>
+          ${target.deadline ? `<div class="deadline">Deadline: <span class="deadline-text">${target.deadline}</span></div>` : ""}
+          <div class="actions">
+            <button onclick="enterEditMode(${target.id})">Edit</button>
+            <button class="delete" onclick="deleteTarget(${target.id})">Delete</button>
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html> -->
+
+<!-- ----------------------------------- PROMPT 3 ------------------------------------- -->
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Target Setter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    :root {
+      --bg: #f4f4f4;
+      --text: #222;
+      --card: #fff;
+      --border: #28a745;
+    }
+
+    .dark-mode {
+      --bg: #121212;
+      --text: #eaeaea;
+      --card: #1e1e1e;
+      --border: #0f0;
+    }
+
+    .container {
+      background-color: var(--card);
+      padding: 20px 30px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+      margin: 40px auto;
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .close-btn:hover {
+      background-color: #c82333;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: var(--text);
+    }
+
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    .target {
+      background: #f9f9f9;
+      color: #222;
+      padding: 10px;
+      margin-top: 10px;
+      border-left: 5px solid #28a745;
+      position: relative;
+    }
+
+    .overdue {
+      border-left-color: #dc3545 !important;
+      background: #ffe6e6;
+    }
+
+    .timestamp, .deadline {
+      font-size: 0.85em;
+      color: #555;
+    }
+
+    .actions {
+      margin-top: 5px;
+    }
+
+    .actions button {
+      width: auto;
+      margin-right: 5px;
+      background-color: #007bff;
+    }
+
+    .actions button:hover {
+      background-color: #0069d9;
+    }
+
+    .actions .delete {
+      background-color: #dc3545;
+    }
+
+    .actions .delete:hover {
+      background-color: #c82333;
+    }
+
+    .edit-input {
+      width: 100%;
+      margin: 5px 0;
+    }
+
+    #displayOnlyContainer {
+      display: none;
+      text-align: center;
+    }
+
+    #displayOnlyContainer button {
+      width: auto;
+      margin-top: 10px;
+    }
+
+    .toggle-dark {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #343a40;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .toggle-dark:hover {
+      background: #23272b;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px 10px;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<button class="toggle-dark" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
+
+<div class="container" id="formContainer">
+  <button class="close-btn" onclick="toggleView()">×</button>
+  <h1>🎯 Set Your Targets</h1>
+  <input type="text" id="targetTitle" placeholder="Target Title" />
+  <textarea id="targetDescription" placeholder="Target Description"></textarea>
+  <input type="date" id="targetDeadline" />
+  <input type="time" id="targetTime" />
+  <button onclick="addTarget()">Add Target</button>
+  <div id="targetList"></div>
+</div>
+
+<div class="container" id="displayOnlyContainer">
+  <h2>Your Targets</h2>
+  <div id="displayList"></div>
+  <button onclick="toggleView(true)">➕ Add Target</button>
+</div>
+
+<audio id="notifySound" src="https://notificationsounds.com/storage/sounds/file-sounds-1150-pristine.mp3" preload="auto"></audio>
+
+<script>
+  window.onload = function () {
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+
+    const stored = localStorage.getItem("targets");
+    if (stored) {
+      const targets = JSON.parse(stored);
+      targets.forEach(t => {
+        renderTarget(t);
+        renderDisplay(t);
+      });
+    }
+
+    setInterval(checkDeadlines, 1000);
+  };
+
+  function checkDeadlines() {
+    const targets = getTargets();
+    const now = new Date();
+
+    targets.forEach((t, index) => {
+      const divs = document.querySelectorAll(`.target[data-id="${t.id}"]`);
+      if (t.deadline && t.time) {
+        const targetTime = new Date(`${t.deadline}T${t.time}`);
+        if (now >= targetTime) {
+          divs.forEach(d => d.classList.add("overdue"));
+          if (!t.notified) {
+            showNotification(t.title);
+            targets[index].notified = true;
+            saveToStorage(targets);
+          }
+        }
+      }
+    });
+  }
+
+  function showNotification(title) {
+    if (Notification.permission === "granted") {
+      new Notification("🎯 Target Due!", {
+        body: `It's time to complete: ${title}`,
+        icon: "https://cdn-icons-png.flaticon.com/512/992/992700.png"
+      });
+      document.getElementById("notifySound").play();
+    }
+  }
+
+  function saveToStorage(targets) {
+    localStorage.setItem("targets", JSON.stringify(targets));
+  }
+
+  function getTargets() {
+    const stored = localStorage.getItem("targets");
+    return stored ? JSON.parse(stored) : [];
+  }
+
+  function addTarget() {
+    const title = document.getElementById("targetTitle").value.trim();
+    const desc = document.getElementById("targetDescription").value.trim();
+    const deadline = document.getElementById("targetDeadline").value;
+    const time = document.getElementById("targetTime").value;
+
+    if (title === "" || desc === "") {
+      alert("Please fill in the title and description!");
+      return;
+    }
+
+    const now = new Date().toLocaleString();
+    const target = {
+      id: Date.now(),
+      title,
+      desc,
+      deadline,
+      time,
+      timestamp: now,
+      notified: false
+    };
+
+    const targets = getTargets();
+    targets.push(target);
+    saveToStorage(targets);
+    renderTarget(target);
+    renderDisplay(target);
+
+    document.getElementById("targetTitle").value = "";
+    document.getElementById("targetDescription").value = "";
+    document.getElementById("targetDeadline").value = "";
+    document.getElementById("targetTime").value = "";
+  }
+
+  function renderTarget(target) {
+    const targetList = document.getElementById("targetList");
+    const targetDiv = document.createElement("div");
+    targetDiv.className = "target";
+    targetDiv.setAttribute("data-id", target.id);
+    targetDiv.innerHTML = `
+      <div class="display-mode">
+        <strong class="title">${target.title}</strong>
+        <p class="desc">${target.desc}</p>
+        <div class="timestamp">Added on: ${target.timestamp}</div>
+        ${target.deadline ? `<div class="deadline">Deadline: ${target.deadline} ${target.time ? `⏰ ${target.time}` : ""}</div>` : ""}
+        <div class="actions">
+          <button onclick="enterEditMode(${target.id})">Edit</button>
+          <button class="delete" onclick="deleteTarget(${target.id})">Delete</button>
+        </div>
+      </div>
+    `;
+    targetList.appendChild(targetDiv);
+  }
+
+  function renderDisplay(target) {
+    const displayList = document.getElementById("displayList");
+    const displayDiv = document.createElement("div");
+    displayDiv.className = "target";
+    displayDiv.setAttribute("data-id", target.id);
+    displayDiv.innerHTML = `
+      <strong>${target.title}</strong>
+      <p>${target.desc}</p>
+      <div class="timestamp">Added on: ${target.timestamp}</div>
+      ${target.deadline ? `<div class="deadline">Deadline: ${target.deadline} ${target.time ? `⏰ ${target.time}` : ""}</div>` : ""}
+    `;
+    displayList.appendChild(displayDiv);
+  }
+
+  function deleteTarget(id) {
+    const targets = getTargets().filter(t => t.id !== id);
+    saveToStorage(targets);
+    document.querySelectorAll(`.target[data-id='${id}']`).forEach(el => el.remove());
+  }
+
+  function enterEditMode(id) {
+    const targetDiv = document.querySelector(`#formContainer .target[data-id='${id}']`);
+    const target = getTargets().find(t => t.id === id);
+    targetDiv.innerHTML = `
+      <input class="edit-input" type="text" id="editTitle-${id}" value="${target.title}" />
+      <textarea class="edit-input" id="editDesc-${id}">${target.desc}</textarea>
+      <input class="edit-input" type="date" id="editDeadline-${id}" value="${target.deadline || ''}" />
+      <input class="edit-input" type="time" id="editTime-${id}" value="${target.time || ''}" />
+      <div class="actions">
+        <button onclick="saveEdit(${id})">Save</button>
+        <button class="delete" onclick="cancelEdit(${id})">Cancel</button>
+      </div>
+    `;
+  }
+
+  function saveEdit(id) {
+    const title = document.getElementById(`editTitle-${id}`).value.trim();
+    const desc = document.getElementById(`editDesc-${id}`).value.trim();
+    const deadline = document.getElementById(`editDeadline-${id}`).value;
+    const time = document.getElementById(`editTime-${id}`).value;
+
+    if (title === "" || desc === "") {
+      alert("Title and description cannot be empty!");
+      return;
+    }
+
+    const updatedTargets = getTargets().map(t => {
+      if (t.id === id) {
+        return { ...t, title, desc, deadline, time, notified: false };
+      }
+      return t;
+    });
+
+    saveToStorage(updatedTargets);
+    document.getElementById("targetList").innerHTML = "";
+    document.getElementById("displayList").innerHTML = "";
+    updatedTargets.forEach(t => {
+      renderTarget(t);
+      renderDisplay(t);
+    });
+  }
+
+  function cancelEdit(id) {
+    const target = getTargets().find(t => t.id === id);
+    const targetDiv = document.querySelector(`#formContainer .target[data-id='${id}']`);
+    targetDiv.remove();
+    renderTarget(target);
+  }
+
+  function toggleView(showForm = false) {
+    const form = document.getElementById("formContainer");
+    const display = document.getElementById("displayOnlyContainer");
+
+    if (showForm) {
+      form.style.display = "block";
+      display.style.display = "none";
+    } else {
+      form.style.display = "none";
+      display.style.display = "block";
+    }
+  }
+
+  function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode");
+  }
+</script>
+</body>
+</html> -->
+
+<!-- ------------------------------------ PROMPT 4-------------------------------------- -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Target Setter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    :root {
+      --bg: #f4f4f4;
+      --text: #222;
+      --card: #fff;
+      --border: #28a745;
+    }
+
+    .dark-mode {
+      --bg: #121212;
+      --text: #eaeaea;
+      --card: #1e1e1e;
+      --border: #0f0;
+    }
+
+    .container {
+      background-color: var(--card);
+      padding: 20px 30px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+      margin: 40px auto;
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .close-btn:hover {
+      background-color: #c82333;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: var(--text);
+    }
+
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    .target {
+      background: #f9f9f9;
+      color: #222;
+      padding: 10px;
+      margin-top: 10px;
+      border-left: 5px solid #28a745;
+      position: relative;
+    }
+
+    .overdue {
+      border-left-color: #dc3545 !important;
+      background: #ffe6e6;
+    }
+
+    .timestamp, .deadline {
+      font-size: 0.85em;
+      color: #555;
+    }
+
+    .actions {
+      margin-top: 5px;
+    }
+
+    .actions button {
+      width: auto;
+      margin-right: 5px;
+      background-color: #007bff;
+    }
+
+    .actions button:hover {
+      background-color: #0069d9;
+    }
+
+    .actions .delete {
+      background-color: #dc3545;
+    }
+
+    .actions .delete:hover {
+      background-color: #c82333;
+    }
+
+    .edit-input {
+      width: 100%;
+      margin: 5px 0;
+    }
+
+    #displayOnlyContainer {
+      display: none;
+      text-align: center;
+    }
+
+    #displayOnlyContainer button {
+      width: auto;
+      margin-top: 10px;
+    }
+
+    .toggle-dark {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #343a40;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .toggle-dark:hover {
+      background: #23272b;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px 10px;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<button class="toggle-dark" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
+
+<div class="container" id="formContainer">
+  <button class="close-btn" onclick="toggleView()">×</button>
+  <h1>🎯 Set Your Targets</h1>
+  <input type="text" id="targetTitle" placeholder="Target Title" />
+  <textarea id="targetDescription" placeholder="Target Description"></textarea>
+  <input type="date" id="targetDeadline" />
+  <input type="time" id="targetTime" />
+  <button onclick="addTarget()">Add Target</button>
+  <div id="targetList"></div>
+</div>
+
+<div class="container" id="displayOnlyContainer">
+  <h2>Your Targets</h2>
+  <div id="displayList"></div>
+  <button onclick="toggleView(true)">➕ Add Target</button>
+</div>
+
+<audio id="notifySound" src="https://notificationsounds.com/storage/sounds/file-sounds-1150-pristine.mp3" preload="auto"></audio>
+
+<script>
+  window.onload = function () {
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+
+    const stored = localStorage.getItem("targets");
+    if (stored) {
+      const targets = JSON.parse(stored);
+      targets.forEach(t => {
+        renderTarget(t);
+        renderDisplay(t);
+      });
+    }
+
+    setInterval(checkDeadlines, 1000);
+  };
+
+  function checkDeadlines() {
+    const targets = getTargets();
+    const now = new Date();
+
+    targets.forEach((t, index) => {
+      const divs = document.querySelectorAll(`.target[data-id="${t.id}"]`);
+      if (t.deadline && t.time) {
+        const targetTime = new Date(`${t.deadline}T${t.time}`);
+        if (now >= targetTime) {
+          divs.forEach(d => d.classList.add("overdue"));
+          if (!t.notified) {
+            showNotification(t.title);
+            targets[index].notified = true;
+            saveToStorage(targets);
+          }
+        }
+      }
+    });
+  }
+
+  function showNotification(title) {
+    if (Notification.permission === "granted") {
+      new Notification("🎯 Target Due!", {
+        body: `It's time to complete: ${title}`,
+        icon: "https://cdn-icons-png.flaticon.com/512/992/992700.png"
+      });
+      document.getElementById("notifySound").play();
+    }
+  }
+
+  function saveToStorage(targets) {
+    localStorage.setItem("targets", JSON.stringify(targets));
+  }
+
+  function getTargets() {
+    const stored = localStorage.getItem("targets");
+    return stored ? JSON.parse(stored) : [];
+  }
+
+  function addTarget() {
+    const title = document.getElementById("targetTitle").value.trim();
+    const desc = document.getElementById("targetDescription").value.trim();
+    const deadline = document.getElementById("targetDeadline").value;
+    const time = document.getElementById("targetTime").value;
+
+    if (title === "" || desc === "") {
+      alert("Please fill in the title and description!");
+      return;
+    }
+
+    const now = new Date().toLocaleString();
+    const target = {
+      id: Date.now(),
+      title,
+      desc,
+      deadline,
+      time,
+      timestamp: now,
+      notified: false
+    };
+
+    const targets = getTargets();
+    targets.push(target);
+    saveToStorage(targets);
+    renderTarget(target);
+    renderDisplay(target);
+
+    document.getElementById("targetTitle").value = "";
+    document.getElementById("targetDescription").value = "";
+    document.getElementById("targetDeadline").value = "";
+    document.getElementById("targetTime").value = "";
+  }
+
+  function renderTarget(target) {
+    const targetList = document.getElementById("targetList");
+    const targetDiv = document.createElement("div");
+    targetDiv.className = "target";
+    targetDiv.setAttribute("data-id", target.id);
+    targetDiv.innerHTML = `
+      <div class="display-mode">
+        <strong class="title">${target.title}</strong>
+        <p class="desc">${target.desc}</p>
+        <div class="timestamp">Added on: ${target.timestamp}</div>
+        ${target.deadline ? `<div class="deadline">Deadline: ${target.deadline} ${target.time ? `⏰ ${target.time}` : ""}</div>` : ""}
+        <div class="actions">
+          <button onclick="enterEditMode(${target.id})">Edit</button>
+          <button class="delete" onclick="deleteTarget(${target.id})">Delete</button>
+        </div>
+      </div>
+    `;
+    targetList.appendChild(targetDiv);
+  }
+
+  function renderDisplay(target) {
+    const displayList = document.getElementById("displayList");
+    const displayDiv = document.createElement("div");
+    displayDiv.className = "target";
+    displayDiv.setAttribute("data-id", target.id);
+    displayDiv.innerHTML = `
+      <strong>${target.title}</strong>
+      <p>${target.desc}</p>
+      <div class="timestamp">Added on: ${target.timestamp}</div>
+      ${target.deadline ? `<div class="deadline">Deadline: ${target.deadline} ${target.time ? `⏰ ${target.time}` : ""}</div>` : ""}
+    `;
+    displayList.appendChild(displayDiv);
+  }
+
+  function deleteTarget(id) {
+    const targets = getTargets().filter(t => t.id !== id);
+    saveToStorage(targets);
+    document.querySelectorAll(`.target[data-id='${id}']`).forEach(el => el.remove());
+  }
+
+  function enterEditMode(id) {
+    const targetDiv = document.querySelector(`#formContainer .target[data-id='${id}']`);
+    const target = getTargets().find(t => t.id === id);
+    targetDiv.innerHTML = `
+      <input class="edit-input" type="text" id="editTitle-${id}" value="${target.title}" />
+      <textarea class="edit-input" id="editDesc-${id}">${target.desc}</textarea>
+      <input class="edit-input" type="date" id="editDeadline-${id}" value="${target.deadline || ''}" />
+      <input class="edit-input" type="time" id="editTime-${id}" value="${target.time || ''}" />
+      <div class="actions">
+        <button onclick="saveEdit(${id})">Save</button>
+        <button class="delete" onclick="cancelEdit(${id})">Cancel</button>
+      </div>
+    `;
+  }
+
+  function saveEdit(id) {
+    const title = document.getElementById(`editTitle-${id}`).value.trim();
+    const desc = document.getElementById(`editDesc-${id}`).value.trim();
+    const deadline = document.getElementById(`editDeadline-${id}`).value;
+    const time = document.getElementById(`editTime-${id}`).value;
+
+    if (title === "" || desc === "") {
+      alert("Title and description cannot be empty!");
+      return;
+    }
+
+    const updatedTargets = getTargets().map(t => {
+      if (t.id === id) {
+        return { ...t, title, desc, deadline, time, notified: false };
+      }
+      return t;
+    });
+
+    saveToStorage(updatedTargets);
+    document.getElementById("targetList").innerHTML = "";
+    document.getElementById("displayList").innerHTML = "";
+    updatedTargets.forEach(t => {
+      renderTarget(t);
+      renderDisplay(t);
+    });
+  }
+
+  function cancelEdit(id) {
+    const target = getTargets().find(t => t.id === id);
+    const targetDiv = document.querySelector(`#formContainer .target[data-id='${id}']`);
+    targetDiv.remove();
+    renderTarget(target);
+  }
+
+  function toggleView(showForm = false) {
+    const form = document.getElementById("formContainer");
+    const display = document.getElementById("displayOnlyContainer");
+
+    if (showForm) {
+      form.style.display = "block";
+      display.style.display = "none";
+    } else {
+      form.style.display = "none";
+      display.style.display = "block";
+    }
+  }
+
+  function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode");
+  }
+</script>
+</body>
+</html>
